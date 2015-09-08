@@ -10,11 +10,11 @@ import (
 	"github.com/zhouhui8915/engine.io-go/websocket"
 	"io"
 	"net/http"
+	"net/url"
 	"strings"
 	"sync"
 	"time"
 )
-
 
 var transports = []string{"polling", "websocket"}
 
@@ -33,10 +33,10 @@ func init() {
 	}
 }
 
-
 type ClientConn struct {
 	id              string
 	transportName   string
+	url             *url.URL
 	request         *http.Request
 	writerLocker    sync.Mutex
 	transportLocker sync.RWMutex
@@ -52,13 +52,19 @@ type ClientConn struct {
 	pingChan        chan bool
 }
 
-func NewClientConn(transportName string, r *http.Request) (client *ClientConn, err error) {
+func NewClientConn(transportName string, u *url.URL) (client *ClientConn, err error) {
+
 	if transportName == "" {
-		transportName = "polling"
+		transportName = "websocket"
+	}
+
+	_, exists := creaters[transportName]
+	if !exists {
+		return nil, InvalidError
 	}
 
 	client = &ClientConn{
-		request:       r,
+		url:           u,
 		transportName: transportName,
 		state:         stateNormal,
 		pingTimeout:   60000 * time.Millisecond,
@@ -227,6 +233,12 @@ func (c *ClientConn) OnClose(server transport.Client) {
 
 func (c *ClientConn) onOpen() error {
 
+	var err error
+	c.request, err = http.NewRequest("GET", c.url.String(), nil)
+	if err != nil {
+		return err
+	}
+
 	creater, exists := creaters["polling"]
 	if !exists {
 		return InvalidError
@@ -298,29 +310,35 @@ func (c *ClientConn) onOpen() error {
 	}
 	//fmt.Println(string(p2))
 
-	//upgrade
-	creater, exists = creaters["websocket"]
-	if !exists {
+	if c.transportName == "polling" {
+		//over
+	} else if c.transportName == "websocket" {
+		//upgrade
+		creater, exists = creaters["websocket"]
+		if !exists {
+			return InvalidError
+		}
+
+		c.request.URL.Scheme = "ws"
+		q.Set("sid", c.id)
+		q.Set("transport", "websocket")
+		c.request.URL.RawQuery = q.Encode()
+
+		transport, err = creater.Client(c.request)
+		if err != nil {
+			return err
+		}
+		c.setUpgrading("websocket", transport)
+
+		w, err := c.getUpgrade().NextWriter(message.MessageText, parser.PING)
+		if err != nil {
+			return err
+		}
+		w.Write([]byte("probe"))
+		w.Close()
+	} else {
 		return InvalidError
 	}
-
-	c.request.URL.Scheme = "ws"
-	q.Set("sid", c.id)
-	q.Set("transport", "websocket")
-	c.request.URL.RawQuery = q.Encode()
-
-	transport, err = creater.Client(c.request)
-	if err != nil {
-		return err
-	}
-	c.setUpgrading("websocket", transport)
-
-	w, err := c.getUpgrade().NextWriter(message.MessageText, parser.PING)
-	if err != nil {
-		return err
-	}
-	w.Write([]byte("probe"))
-	w.Close()
 
 	//fmt.Println("end")
 
