@@ -1,7 +1,7 @@
 package websocket
 
 import (
-	"github.com/googollee/go-engine.io/transport"
+	"github.com/zhouhui8915/engine.io-go/transport"
 )
 
 var Creater = transport.Creater{

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/googollee/go-engine.io/message"
+	"github.com/zhouhui8915/engine.io-go/message"
 )
 
 // PacketType is the type of packet

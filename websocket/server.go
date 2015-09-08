@@ -4,9 +4,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/googollee/go-engine.io/message"
-	"github.com/googollee/go-engine.io/parser"
-	"github.com/googollee/go-engine.io/transport"
+	"github.com/zhouhui8915/engine.io-go/message"
+	"github.com/zhouhui8915/engine.io-go/parser"
+	"github.com/zhouhui8915/engine.io-go/transport"
 	"github.com/gorilla/websocket"
 )
 
