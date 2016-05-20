@@ -3,15 +3,15 @@ package polling
 import (
 	"bytes"
 	"fmt"
-	"github.com/zhouhui8915/engine.io-go/message"
+	"github.com/jcarm010/engine.io-go/message"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"time"
 
-	"github.com/zhouhui8915/engine.io-go/parser"
-	"github.com/zhouhui8915/engine.io-go/transport"
+	"github.com/jcarm010/engine.io-go/parser"
+	"github.com/jcarm010/engine.io-go/transport"
 )
 
 type client struct {

@@ -2,7 +2,7 @@ package websocket
 
 import (
 	"encoding/hex"
-	"github.com/zhouhui8915/engine.io-go/transport"
+	"github.com/jcarm010/engine.io-go/transport"
 	"github.com/gorilla/websocket"
 	"io/ioutil"
 	"net/http"
@@ -11,8 +11,8 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/zhouhui8915/engine.io-go/message"
-	"github.com/zhouhui8915/engine.io-go/parser"
+	"github.com/jcarm010/engine.io-go/message"
+	"github.com/jcarm010/engine.io-go/parser"
 	. "github.com/smartystreets/goconvey/convey"
 )
 

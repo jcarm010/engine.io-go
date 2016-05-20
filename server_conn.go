@@ -9,9 +9,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/zhouhui8915/engine.io-go/message"
-	"github.com/zhouhui8915/engine.io-go/parser"
-	"github.com/zhouhui8915/engine.io-go/transport"
+	"github.com/jcarm010/engine.io-go/message"
+	"github.com/jcarm010/engine.io-go/parser"
+	"github.com/jcarm010/engine.io-go/transport"
 )
 
 type MessageType message.MessageType
